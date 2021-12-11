@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+ Nginx:
+  image: nginx:latest
+  networks:
+   - frontend
+   - backend
+  expose:
+   - 6666
+ PHP:
+  image: php:7.3-apache
+  volumes:
+   - "./DocumentRoot:/var/www/html"
+  ports: 
+   - 80:80
+  networks:
+   - backend
+ mariadb:
+  image: mariadb:10.5.2
+  volumes:
+   - mariadb-volume:/var/lib/mysql
+  environment:
+   MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+   MYSQL_ROOT_PASSWORD: "rootpwd"
+   MYSQL_USER: 'testuser'
+   MYSQL_PASSWORD: 'testpassword'
+   MYSQL_DATABASE: 'testdb'
+  networks:
+   - backend
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  ports: 
+   - 6001:80
+  links:
+   - 'mariadb:db'
+  networks:
+   - backend
+
+volumes:
+ mariadb-volume:
+
+networks:
+ frontend:
+ backend:
